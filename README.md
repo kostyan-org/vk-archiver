@@ -8,7 +8,35 @@
 
 [Home page](https://kostyan-org.github.io/vk-archiver)
 
-
-install:
+## Установка:
 
     composer create-project kostyan-org/vk-archiver
+    cd .\vk-archiver\
+
+редактируем файл **.env**
+
+    VK_API_TOKEN=полученный токен от вк
+    VK_API_USER=айди юзера токена
+    DATABASE_URL="mysql://root:@127.0.0.1:3306/название новой БД?charset=utf8mb4"
+
+создаем новую БД
+
+    php bin/console doctrine:database:create
+    php bin/console doctrine:migrations:migrate
+
+## Работа
+список команд
+
+    php bin/console app:
+
+пример загрузки 3-х последних постов с лайками и комментариями из группы vk
+
+    php bin/console app:download vk --likes --comments --limit 3
+
+список готовых методов статистики
+
+    php bin/console app:stat --methods
+
+пример просмотра статистики группы - vk
+
+    php bin/console app:stat --method statwall --source vk
