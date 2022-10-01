@@ -4,6 +4,7 @@ namespace App\DataProcessing;
 
 use App\Command\HelperTrait;
 use App\Entity\Group;
+use App\Entity\Like;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -36,16 +37,23 @@ class Author
      */
     public function setFromArray(array $array, string $prefix): self
     {
-
-        if (isset($array[$prefix . 'UserId']) && null !== $array[$prefix . 'UserId']) {
-            $firstName = $array[$prefix . 'UserFirstName'] ?? '';
-            $lastName = $array[$prefix . 'UserLastName'] ?? '';
-            $this->setName($firstName . ' ' . $lastName);
+        if ($array[0] instanceof Like) {
+            $fromId = $array[0]->getUserId();
+        } else {
+            $fromId = $array[0]->getFromId();
         }
 
-        if (isset($array[$prefix . 'GroupId']) && null !== $array[$prefix . 'GroupId']) {
+        if ($this->isUser($fromId)) {
+            if (isset($array[$prefix . 'UserId']) && null !== $array[$prefix . 'UserId']) {
+                $firstName = $array[$prefix . 'UserFirstName'] ?? '';
+                $lastName = $array[$prefix . 'UserLastName'] ?? '';
+                $this->setName($firstName . ' ' . $lastName);
+            }
+        } else {
+            if (isset($array[$prefix . 'GroupId']) && null !== $array[$prefix . 'GroupId']) {
 
-            $this->setName($array[$prefix . 'GroupName'] ?? null);
+                $this->setName($array[$prefix . 'GroupName'] ?? null);
+            }
         }
 
         $this->setName(trim($this->getName(), ' '));
